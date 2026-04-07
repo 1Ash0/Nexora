@@ -1,0 +1,9 @@
+Claim A: {claim_a} (Source: {source_a})
+Claim B: {claim_b} (Source: {source_b})
+
+Do these claims contradict each other? If yes:
+1. Type: direct (opposite facts), methodological (different methods, opposite conclusions), scope (different scopes presented as universal)
+2. Severity: 0.0 (trivial) to 1.0 (fundamental)
+3. Brief explanation
+
+Output JSON: {{"contradicts": bool, "type": str, "severity": float, "explanation": str}}
