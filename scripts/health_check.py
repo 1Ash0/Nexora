@@ -9,6 +9,8 @@ GREEN = '\033[92m'
 RED = '\033[91m'
 RESET = '\033[0m'
 
+from backend.config.settings import settings
+
 def print_status(service, status, msg=""):
     if status:
         print(f"{GREEN}[OK] {service} running{RESET} {msg}")
@@ -17,7 +19,10 @@ def print_status(service, status, msg=""):
 
 def test_neo4j():
     try:
-        driver = GraphDatabase.driver("bolt://127.0.0.1:7687", auth=("neo4j", "research123"))
+        driver = GraphDatabase.driver(
+            settings.NEO4J_URI, 
+            auth=(settings.NEO4J_USER, settings.NEO4J_PASSWORD)
+        )
         driver.verify_connectivity()
         driver.close()
         return True
@@ -27,7 +32,7 @@ def test_neo4j():
 
 def test_qdrant():
     try:
-        client = QdrantClient(host="127.0.0.1", port=6333)
+        client = QdrantClient(host=settings.QDRANT_HOST, port=settings.QDRANT_PORT)
         client.get_collections()
         return True
     except Exception as e:
@@ -36,7 +41,7 @@ def test_qdrant():
 
 def test_redis():
     try:
-        r = redis.Redis(host='127.0.0.1', port=6379, db=0)
+        r = redis.from_url(settings.REDIS_URL)
         r.ping()
         return True
     except Exception as e:
@@ -45,13 +50,7 @@ def test_redis():
 
 def test_postgres():
     try:
-        conn = psycopg2.connect(
-            dbname="research_db",
-            user="research",
-            password="research123",
-            host="127.0.0.1",
-            port="5432"
-        )
+        conn = psycopg2.connect(settings.DATABASE_URL)
         conn.close()
         return True
     except Exception as e:
